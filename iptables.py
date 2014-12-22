@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+import os
+import subprocess
+import socket
+import sys
+import time
+import signal
+
+class PortForward:
+    def __init__(self, host, target, ty):
+        self.host = host
+        self.target = target
+        self.ty = ty
+        self.active = False
+    def execute(self, command):
+        try:
+            subprocess.check_call(command.split())
+        except:
+            print('Failed to setup IPTables, Did you use --privileged?')
+            sys.exit(1)
+        return self
+    def add(self):
+        base = 'iptables -t nat -A PREROUTING -p $type --dport $host -j REDIRECT --to $target -w'
+        base = base.replace('$type', self.ty) 
+        base = base.replace('$host', str(self.host)) 
+        base = base.replace('$target', str(self.target))
+        print(base);
+        self.execute(base)
+        self.active = True
+    def remove(self):
+        base = 'iptables -t nat -D PREROUTING -p $type --dport $host -j REDIRECT --to $target -w'
+        base = base.replace('$type', self.ty) 
+        base = base.replace('$host', str(self.host)) 
+        base = base.replace('$target', str(self.target))
+        print(base);
+        self.execute(base)
+        self.active = False
+
+class IpTables:
+    def __init__(self):
+        self.forwards = []
+        self.forwards.append(PortForward(53, 53, 'udp'))
+        self.forwards.append(PortForward(80, 3129, 'tcp'))
+    def add(self):
+        for pf in self.forwards:
+          if pf.active == False:
+              pf.add()
+    def remove(self):
+        for pf in self.forwards:
+          if pf.active == True:
+              pf.remove()
+
+ipTables = IpTables()
+
+def exit_gracefully(signum, frame):
+    print('Please wait, tidying up IP Tables...')
+    ipTables.remove()
+    sys.exit(0)
+
+for sig in [signal.SIGTERM, signal.SIGINT, signal.SIGHUP, signal.SIGQUIT]:
+    signal.signal(sig, exit_gracefully)
+
+ipTables.add()
+while True:
+    time.sleep(1)
+
+sys.exit(1)

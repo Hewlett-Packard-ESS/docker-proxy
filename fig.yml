@@ -1,0 +1,6 @@
+squid:
+  build: .
+  privileged: true
+  environment:
+    NAMESERVERS: "172.19.2.5"
+  net: "host"
