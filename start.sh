@@ -2,9 +2,6 @@
 chown squid:squid /var/cache/squid
 [ -e /var/cache/squid/swap.state ] || squid -z 2>/dev/null
 
-#sleep 5
-echo "Running squid..."
-
 touch /etc/resolv.dnsmasq.conf
 add_line () {
   grep -q -F "$1" $2 || echo $1 >> $2
@@ -17,7 +14,6 @@ do
   add_line "nameserver $i" "/etc/resolv.dnsmasq.conf"
 done
 
-# Run squid 
-squid -N
+sleep 3
 
-echo "Exiting squid..."
+supervisord -c /etc/supervisord.conf -j /var/run/supervisor.pid

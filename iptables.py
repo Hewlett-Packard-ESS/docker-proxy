@@ -41,6 +41,7 @@ class IpTables:
         self.forwards = []
         self.forwards.append(PortForward(53, 53, 'udp'))
         self.forwards.append(PortForward(80, 3129, 'tcp'))
+        self.forwards.append(PortForward(443, 3130, 'tcp'))
     def add(self):
         for pf in self.forwards:
           if pf.active == False:
