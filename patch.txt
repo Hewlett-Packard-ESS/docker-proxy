@@ -1,0 +1,21 @@
+diff --git a/squid-3.5.0.4/src/FwdState.cc b/squid-patched/src/FwdState.cc
+index d74d626..1ea7cba 100644
+--- a/squid-3.5.0.4/src/FwdState.cc
++++ b/squid-3.5.0.4/src/FwdState.cc
+@@ -782,6 +782,7 @@ FwdState::connectStart()
+ 
+     request->hier.startPeerClock();
+ 
++/*
+     if (serverDestinations[0]->getPeer() && request->flags.sslBumped) {
+         debugs(50, 4, "fwdConnectStart: Ssl bumped connections through parent proxy are not allowed");
+         ErrorState *anErr = new ErrorState(ERR_CANNOT_FORWARD, Http::scServiceUnavailable, request);
+@@ -789,7 +790,7 @@ FwdState::connectStart()
+         self = NULL; // refcounted
+         return;
+     }
+-
++*/
+     request->flags.pinned = false; // XXX: what if the ConnStateData set this to flag existing credentials?
+     // XXX: answer: the peer selection *should* catch it and give us only the pinned peer. so we reverse the =0 step below.
+     // XXX: also, logs will now lie if pinning is broken and leads to an error message.

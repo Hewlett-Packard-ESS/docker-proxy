@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 chown squid:squid /var/cache/squid
 [ -e /var/cache/squid/swap.state ] || squid -z 2>/dev/null
 
@@ -14,6 +15,8 @@ do
   add_line "nameserver $i" "/etc/resolv.dnsmasq.conf"
 done
 
-sleep 3
+# Apply the changes to the squid config
+chef-client -z -N squid.docker.local -o squid
 
+sleep 3
 supervisord -c /etc/supervisord.conf -j /var/run/supervisor.pid

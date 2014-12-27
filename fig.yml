@@ -1,6 +1,10 @@
 squid:
-  build: .
+  image: hpess/dockerproxy
   privileged: true
   environment:
-    NAMESERVERS: "172.19.2.5"
+    cache_peer: 'proxy.sdc.hp.com'
+    cache_peer_port: 8080
+    insecure: 'true'
+    local_servers: "172.19.0.0/12"
+    nameservers: "172.19.2.5"
   net: "host"
