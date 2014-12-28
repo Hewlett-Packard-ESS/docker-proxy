@@ -94,7 +94,8 @@ home:
   image: hpess/dockerproxy
   privileged: true
   net: "host"
-  nameservers: "8.8.8.8 8.8.4.4"
+  environment:
+    nameservers: "8.8.8.8 8.8.4.4"
 ```
 And type `sudo fig up <corp/home>` of `sudo fig up <corp/home> -d` if you want to daemonize.
 
