@@ -48,7 +48,7 @@ This poses numerous obviously ethical implications, as such be it on your should
 
 Also, the client will know the certificate is "invalid", as it's signed by squid.
 You a few options here
-  1. Install the CA file outputted during `fig run` on the other containers
+  1. Install the CA file generated and outputted during `fig run` on the other containers
   2. Use `insecure` options such as curl -k
   3. Create your own Dockerfile, inheriting from hpess/dockerproxy which copies a trusted CA key.pem and cert.pem to /etc/squid/ssl_cert
 
@@ -67,9 +67,11 @@ trans:
     nameservers: "172.19.2.5"
     hosts: "somehost=172.19.0.3"
 ```
+And type `sudo fig run --rm trans`.
+
 Or you can just use docker
 ```
-sudo docker run -it --privileged --net=host -e="cache_peer=your.upstream.proxy" hpess/dockerproxy
+sudo docker run -it --rm --privileged --net=host -e="cache_peer=your.upstream.proxy" hpess/dockerproxy
 ```
 The available environment variables are:
   - cache_peer: This is your corporate/second proxy that squid should backend on to.
@@ -79,7 +81,7 @@ The available environment variables are:
   - nameservers: DNS servers that you want dnsmasq to use for resolution, by default we will copy the contents of /etc/resolv.conf.
   - hosts: Additional host file entried that you want dnsmasq to use for resolution on top of the contents of your hosts /etc/hosts file.
 
-From there, just run the container with `sudo fig run trans` and you should see a bunch of chef configuration and then services starting, it should only take about 10seconds and then its all done, your other containers should be using this one for dns and web.
+Chef configuration and starting of services takes 5 seconds or so, but then you'll be good to go.
 
 ## Firewalls
 I've noticed that firewalld likes to cause you issues, as a result you'll need to allow the traffic on your host (or disable firewalld):
@@ -88,3 +90,4 @@ firewall-cmd --zone=<whatever/public> --add-port=53/udp
 firewall-cmd --zone=<whatever/public> --add-port=3129/tcp
 firewall-cmd --zone=<whatever/public> --add-port=3130/tcp
 ```
+Use --permanent if you want the rules to persist.
