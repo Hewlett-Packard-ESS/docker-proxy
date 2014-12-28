@@ -4,7 +4,7 @@ chown squid:squid /var/cache/squid
 
 # Apply the changes to the squid config
 echo "Please wait, performing surface level configuration..."
-cd /storage && chef-client -Fmin -z -N squid.docker.local -o squid,dnsmasq,iptables
+cd /storage && chef-client -Fmin -l error -z -N squid.docker.local -o squid,dnsmasq,iptables
 
 # Setup the squid cache dirs
 echo "Please wait, initialising squid cache directories..."
