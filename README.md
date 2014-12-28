@@ -76,9 +76,9 @@ You a few options here
   3. Create your own Dockerfile, inheriting from hpess/dockerproxy which copies a trusted CA key.pem and cert.pem to /etc/squid/ssl_cert which will be used for signing.
 
 ## Use
-The easiest way (or at least my preferred way) is by using a fig file.  Please note that the container MUST be privileged and MUST have net HOST for this to work.
+The easiest way (or at least my preferred way) is by using a fig file and storing configurations for the different places that I work.  Please note that the container MUST be privileged and MUST have net HOST for this to work.
 ```
-trans:
+corp:
   image: hpess/dockerproxy
   privileged: true
   net: "host"
@@ -89,8 +89,14 @@ trans:
     local_servers: "172.19.0.0/12"
     nameservers: "172.19.2.5"
     hosts: "somehost=172.19.0.3"
+
+home:
+  image: hpess/dockerproxy
+  privileged: true
+  net: "host"
+  nameservers: "8.8.8.8 8.8.4.4"
 ```
-And type `sudo fig up` of `sudo fig up -d` if you want to daemonize.
+And type `sudo fig up <corp/home>` of `sudo fig up <corp/home> -d` if you want to daemonize.
 
 Or you can just use docker
 ```
