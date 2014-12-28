@@ -74,7 +74,7 @@ Or you can just use docker
 sudo docker run -it --rm --privileged --net=host -e="cache_peer=your.upstream.proxy" hpess/dockerproxy
 ```
 The available environment variables are:
-  - cache_peer: This is your corporate/second proxy that squid should backend on to.
+  - cache_peer: This is your corporate/second proxy that squid should backend on to, if you don't specify an upstream proxy - all requests will be sent direct (always_direct)
   - cache_peer_port: The port of your second proxy, defaults to 8080
   - insecure: Will tell squid not to verify certificates when using ssl-bump.  Useful if you're bumping to servers with self signed certificates.
   - local_servers: Subnets that squid should always go directly to, bypassing cache_peer, defaults to []

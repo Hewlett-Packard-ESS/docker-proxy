@@ -20,8 +20,10 @@ acl CONNECT method CONNECT
 request_header_access X-Forwarded-For deny all
 request_header_access Via deny all
 
+<% if !@confvars[:cachePeer].nil? %>
 # Setup our cache peer
 cache_peer <%= @confvars[:cachePeer] %> parent <%= @confvars[:cachePeerPort] %> 0 no-query no-digest originserver 
+<% end%>
 
 # define our local subnet
 acl localnet dst 10.0.0.0/8     # RFC1918 possible internal network
@@ -33,11 +35,16 @@ acl localnet dst fe80::/10      # RFC 4291 link-local (directly plugged) machine
 acl localnet dst <%= server %>
 <% end %>
 
+<% if !@confvars[:cachePeer].nil? %>
 # Always go direct to local servers we can access
 always_direct allow localnet
 
 # Otherwise go via the cache peer INSECURELY (http)
 never_direct allow all
+<% else %>
+# As no cache peer is defined, we always want to go direct
+always_direct allow all
+<% end %>
 
 http_access deny !Safe_ports
 http_access deny CONNECT !SSL_ports
@@ -50,10 +57,16 @@ http_port 3128
 http_port 3129 intercept
 https_port 3130 intercept ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/ssl_cert/cert.pem key=/etc/squid/ssl_cert/key.pem
 
+<% if !@confvars[:cachePeer].nil? %>
+# Always go direct to local servers we can access
 # For local servers, do a server-first approach
 ssl_bump server-first localnet
 # For peer servers, do a client first approach
 ssl_bump client-first all
+<% else %>
+# As no cache peer is defined, we want to do ssl-bumps server first (the most secure way)
+ssl_bump server-first all
+<% end %>
 
 # Some more, rather insecure options
 <% if @confvars[:insecure] %>

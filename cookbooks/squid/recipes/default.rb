@@ -13,13 +13,6 @@ def default_value(val, default)
   end
 end
 
-def enforce_value(val, name)
-  if val.nil?
-    raise "#{name} is a required environment variable"
-  end
-  return default_value(val, nil)
-end
-
 def str_to_arr(input)
   input = default_value(input, [])
   if input === []
@@ -29,7 +22,7 @@ def str_to_arr(input)
 end
 
 squidConfig = {
-  :cachePeer => enforce_value(ENV['cache_peer'], 'cache_peer'),
+  :cachePeer => ENV['cache_peer'],
   :cachePeerPort => default_value(ENV['cache_peer_port'], '8080'),
   :localServers => str_to_arr(ENV['local_servers']),
   :insecure => default_value(ENV['insecure'], false)
