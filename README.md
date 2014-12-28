@@ -6,7 +6,7 @@ It's a nightmare having to ensure all the settings are correct in every containe
 It contains the following software:
   - dnsmasq (v2.66)
   - squid (v3.5.0.4, patched)
-  - chef (--local-mode, as provided by hpess/docker-chef)
+  - chef (--local-mode, as provided by hpess/chef)
 
 ## How it works
 Running this container will modify IP Tables on your host to NAT the configured traffic from docker containers to this container, where the request will be handled in a single place (transparent http/https with squid and transparent dns with dnsmasq).  Upon stopping the container these rules get removed:
@@ -45,6 +45,12 @@ If the destination server is localnet (as defined in the local_servers environme
 However, if the destination is the cache_peer we will use `ssl-bump client first`, which means the CN will be set to the IP of the destination, not the CN, and traffic will be sent unencrypted over the cache_peer proxy.  Currently there doesn't seem to be any way of making squid relay intercepted CONNECT requests via another CONNECT request to a cache_peer.
 
 This poses numerous obviously ethical implications, as such be it on your shoulders if you do something stupid with it.  I only use it for internal development environments where there is nothing sensitive going over it anyway.
+
+Also, the client will know the certificate is "invalid", as it's signed by squid.
+You a few options here
+  1. Install the CA file outputted during `fig run` on the other containers
+  2. Use `insecure` options such as curl -k
+  3. Create your own Dockerfile, inheriting from hpess/dockerproxy which copies a trusted CA key.pem and cert.pem to /etc/squid/ssl_cert
 
 ## Use
 The easiest way (or at least my preferred way) is by using a fig file.  Please note that the container MUST be privileged and MUST have net HOST for this to work.
