@@ -65,7 +65,9 @@ ssl-bump client-first is used in the following situations:
 
 Currently there doesn't seem to be any way to relay an intercepted CONNECT to a HTTP cache_peer via a new CONNECT tunnel.  Therefore any traffic sent by the client to squid as HTTPS will end up going to the cache_peer unencrypted (HTTP) if your cache_peer is not configured with the ssl flag.
 
-The version of squid in this container is patched to allow this behaviour, however it obviously poses numerous obvious ethical and security implications, as such be it on your shoulders if you do something stupid with it.  I only use it for internal development environments where there is nothing sensitive going over it anyway.  It's entirely your responsibility to inform anyone who uses this container in the configuration mentioned above of the risks.
+The version of squid in this container is patched to allow this behaviour, however it obviously poses numerous obvious ethical and security implications.  
+
+**HTTPS was designed to give users an expectation of privacy and security. Decrypting HTTPS tunnels without user consent or knowledge may violate ethical norms and may be illegal in your jurisdiction. Squid decryption features described at http://wiki.squid-cache.org/Features/SslBump and here are designed for deployment with user consent or, at the very least, in environments where decryption without consent is legal. These features also illustrate why users should be careful with trusting HTTPS connections and why the weakest link in the chain of HTTPS protections is rather fragile. Decrypting HTTPS tunnels constitutes a man-in-the-middle attack from the overall network security point of view. Attack tools are an equivalent of an atomic bomb in real world: Make sure you understand what you are doing and that your decision makers have enough information to make wise choices.**
 
 #### Squid signed certificates...
 As you've seen above, certificates in a ssl-bump server-first scenario will be valid, apart from the issuer.
