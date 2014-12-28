@@ -37,7 +37,14 @@ template '/etc/dnsmasq.conf' do
   source 'dnsmasq.conf.erb'
 end
 
-template '/etc/resolv.dnsmasq.conf' do
-  source 'resolv.dnsmasq.conf.erb'
-  variables ({ :confvars => nameserverConfig })
+if nameserverConfig[:nameservers].length === 0
+  file "/etc/resolv.dnsmasq.conf" do
+    content ::File.open("/etc/resolv.conf").read
+    action :create
+  end
+else
+  template '/etc/resolv.dnsmasq.conf' do
+    source 'resolv.dnsmasq.conf.erb'
+    variables ({ :confvars => nameserverConfig })
+  end
 end
