@@ -97,7 +97,7 @@ home:
   privileged: true
   net: "host"
   environment:
-    nameservers: "8.8.8.8 8.8.4.4"
+    nameservers: "8.8.8.8,8.8.4.4"
 ```
 And type `sudo fig up <corp/home>` of `sudo fig up <corp/home> -d` if you want to daemonize.
 
