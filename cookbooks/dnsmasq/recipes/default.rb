@@ -1,4 +1,4 @@
-def parseDnsmasq(input) 
+def parseHosts(input) 
   if input.nil?
     return []
   end
@@ -13,11 +13,31 @@ def parseDnsmasq(input)
   return masqs
 end
 
-dnsmasqConfig = {
-  :hosts => parseDnsmasq(ENV['dnsmasq'])
+hostsConfig = {
+  :hosts => parseHosts(ENV['hosts'])
+}
+
+def parseNameservers(input) 
+  if input.nil?
+    return []
+  end
+  return input.split(',')
+end
+
+nameserverConfig = {
+  :nameservers => parseNameservers(ENV['nameservers'])
 }
 
 template '/etc/dnsmasq.d/00hosts' do
+  source 'hosts.erb'
+  variables ({ :confvars => hostsConfig })
+end
+
+template '/etc/dnsmasq.conf' do
   source 'dnsmasq.conf.erb'
-  variables ({ :confvars => dnsmasqConfig })
+end
+
+template '/etc/resolv.dnsmasq.conf' do
+  source 'resolv.dnsmasq.conf.erb'
+  variables ({ :confvars => nameserverConfig })
 end

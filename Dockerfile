@@ -3,10 +3,6 @@ FROM hpess/chef:latest
 RUN yum -y install perl-Crypt-OpenSSL-X509 openssl openssl-devel gcc gcc-c++ patch python dnsmasq net-tools telnet bind-utils && \
     yum -y clean all
 
-# dnsmasq configuration
-RUN echo 'resolv-file=/etc/resolv.dnsmasq.conf' >> /etc/dnsmasq.conf && \
-    echo 'conf-dir=/etc/dnsmasq.d' >> /etc/dnsmasq.conf
-
 # add the patch file
 COPY patch.txt /usr/local/src/patch.txt
 
@@ -36,11 +32,10 @@ RUN useradd -M squid && \
     chown -R squid:squid /var/lib/ssl_db
 
 COPY start.sh /usr/local/bin/start.sh
-COPY iptables.py /usr/local/bin/iptables.py
 
-COPY dnsmasq.service.conf /etc/supervisord.d/dnsmasq.service.conf
-COPY iptables.service.conf /etc/supervisord.d/iptables.service.conf
-COPY squid.service.conf /etc/supervisord.d/squid.service.conf
+COPY services/dnsmasq.service.conf /etc/supervisord.d/dnsmasq.service.conf
+COPY services/iptables.service.conf /etc/supervisord.d/iptables.service.conf
+COPY services/squid.service.conf /etc/supervisord.d/squid.service.conf
 
 # Add the cookbooks
 COPY cookbooks/ /storage/cookbooks/

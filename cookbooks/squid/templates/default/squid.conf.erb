@@ -1,8 +1,12 @@
 visible_hostname squid.docker.local
+
 access_log /var/log/squid/access.log
-#cache_log /var/log/squid/cache.log
-#cache_store_log /var/log/squid/store.log
+cache_log /var/log/squid/cache.log
+cache_store_log /var/log/squid/store.log
 coredump_dir /var/cache/squid
+
+dns_nameservers 127.0.0.1
+hosts_file none
 
 # debug_options ALL,3
 
@@ -20,14 +24,17 @@ request_header_access Via deny all
 cache_peer <%= @confvars[:cachePeer] %> parent <%= @confvars[:cachePeerPort] %> 0 no-query no-digest originserver 
 
 # define our local subnet
-acl local-servers dst 172.16.0.0/12
-acl local-servers dst 192.168.0.0/16
+acl localnet dst 10.0.0.0/8     # RFC1918 possible internal network
+acl localnet dst 172.16.0.0/12  # RFC1918 possible internal network
+acl localnet dst 192.168.0.0/16 # RFC1918 possible internal network
+acl localnet dst fc00::/7       # RFC 4193 local private network range
+acl localnet dst fe80::/10      # RFC 4291 link-local (directly plugged) machines
 <% @confvars[:localServers].each do |server| %>
-acl local-servers dst <%= server %>
+acl localnet dst <%= server %>
 <% end %>
 
 # Always go direct to local servers we can access
-always_direct allow local-servers
+always_direct allow localnet
 
 # Otherwise go via the cache peer INSECURELY (http)
 never_direct allow all
@@ -44,7 +51,7 @@ http_port 3129 intercept
 https_port 3130 intercept ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/ssl_cert/cert.pem key=/etc/squid/ssl_cert/key.pem
 
 # For local servers, do a server-first approach
-ssl_bump server-first local-servers
+ssl_bump server-first localnet
 # For peer servers, do a client first approach
 ssl_bump client-first all
 
