@@ -28,7 +28,7 @@ cat /etc/squid/ssl_cert/cert.pem
 chown -R squid:squid /etc/squid
 
 echo "Done!  Starting Supervisor..."
-exec supervisord -c /etc/supervisord.conf -j /var/run/supervisor.pid &
+supervisord -c /etc/supervisord.conf &
 SPID="$!"
 echo "Supervisor PID: $SPID"
 
