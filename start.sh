@@ -1,7 +1,6 @@
 #!/bin/bash
 set -e
 chown squid:squid /var/cache/squid
-[ -e /var/cache/squid/swap.state ] || squid -z 2>/dev/null
 
 touch /etc/resolv.dnsmasq.conf
 add_line () {
@@ -16,7 +15,9 @@ do
 done
 
 # Apply the changes to the squid config
-chef-client -z -N squid.docker.local -o squid
+cd /storage && chef-client -z -N squid.docker.local -o squid,dnsmasq
 
+# Setup the squid cache dirs
+[ -e /var/cache/squid/swap.state ] || squid -z 2>/dev/null
 sleep 3
 supervisord -c /etc/supervisord.conf -j /var/run/supervisor.pid

@@ -22,10 +22,13 @@ end
 
 def str_to_arr(input)
   input = default_value(input, [])
+  if input === []
+    return input
+  end
   return input.split(',')
 end
 
-config = {
+squidConfig = {
   :cachePeer => enforce_value(ENV['cache_peer'], 'cache_peer'),
   :cachePeerPort => default_value(ENV['cache_peer_port'], '8080'),
   :localServers => str_to_arr(ENV['local_servers']),
@@ -34,5 +37,5 @@ config = {
 
 template '/etc/squid/squid.conf' do
   source 'squid.conf.erb'
-  variables ({ :confvars => config })
+  variables ({ :confvars => squidConfig })
 end

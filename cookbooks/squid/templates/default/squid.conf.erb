@@ -41,7 +41,7 @@ http_access allow all
 
 http_port 3128
 http_port 3129 intercept
-https_port 3130 intercept ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/ssl_cert/ca.pem key=/etc/squid/ssl_cert/key.pem
+https_port 3130 intercept ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/ssl_cert/cert.pem key=/etc/squid/ssl_cert/key.pem
 
 # For local servers, do a server-first approach
 ssl_bump server-first local-servers

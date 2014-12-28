@@ -19,8 +19,8 @@ RUN cd /usr/local/src && \
     cd squid-3.5.0.4 && \
     ./configure --build=x86_64-redhat-linux-gnu --host=x86_64-redhat-linux-gnu --prefix=/usr  --includedir=/usr/include  --datadir=/usr/share  --bindir=/usr/sbin  --libexecdir=/usr/lib/squid  --localstatedir=/var  --sysconfdir=/etc/squid --enable-icap --enable-ssl --enable-ssl-crtd --enable-delay-pools --with-openssl --enable-eui  --enable-follow-x-forwarded-for --enable-auth --enable-auth-basic=DB,LDAP,MSNT,MSNT-multi-domain,NCSA,NIS,PAM,POP3,RADIUS,SASL,SMB,getpwnam --enable-auth-ntlm=smb_lm,fake --enable-auth-digest=file,LDAP,eDirectory --enable-auth-negotiate=kerberos --enable-external-acl-helpers=file_userip,LDAP_group,time_quota,session,unix_group,wbinfo_group --enable-cache-digests --enable-cachemgr-hostname=localhost --enable-delay-pools --enable-epoll --enable-icap-client --enable-ident-lookups --enable-linux-netfilter --enable-removal-policies=heap,lru --enable-snmp --enable-ssl --enable-ssl-crtd --enable-storeio=aufs,diskd,ufs --enable-wccpv2 --enable-esi --with-aio --with-default-user=squid --with-filedescriptors=16384 --with-dl && \
     make && \
-    make install
-# rm -rf /usr/local/src/squid-3.5.0.4
+    make install && \
+    rm -rf /usr/local/src/squid-3.5.0.4
 
 # Setup squid
 RUN useradd -M squid && \
@@ -35,7 +35,6 @@ RUN useradd -M squid && \
     chown -R squid:squid /var/log/squid && \
     chown -R squid:squid /var/lib/ssl_db
 
-#RUN echo 'address="/esscontrol-npm/172.19.3.16"' >> /etc/dnsmasq.d/00hosts
 COPY start.sh /usr/local/bin/start.sh
 COPY iptables.py /usr/local/bin/iptables.py
 
