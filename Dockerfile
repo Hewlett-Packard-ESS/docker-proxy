@@ -33,9 +33,8 @@ RUN useradd -M squid && \
 
 COPY start.sh /usr/local/bin/start.sh
 
-COPY services/dnsmasq.service.conf /etc/supervisord.d/dnsmasq.service.conf
-COPY services/iptables.service.conf /etc/supervisord.d/iptables.service.conf
-COPY services/squid.service.conf /etc/supervisord.d/squid.service.conf
+# Add the services
+COPY services/* /etc/supervisord.d/
 
 # Add the cookbooks
 COPY cookbooks/ /storage/cookbooks/
