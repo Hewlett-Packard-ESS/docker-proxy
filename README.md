@@ -48,7 +48,7 @@ This poses numerous obviously ethical implications, as such be it on your should
 
 Also, the client will know the certificate is "invalid", as it's signed by squid.
 You a few options here
-  1. Install the CA file generated and outputted during `fig run` on the other containers
+  1. Install the CA file generated and outputted during `fig up` on the other containers
   2. Use `insecure` options such as curl -k
   3. Create your own Dockerfile, inheriting from hpess/dockerproxy which copies a trusted CA key.pem and cert.pem to /etc/squid/ssl_cert
 
@@ -67,7 +67,7 @@ trans:
     nameservers: "172.19.2.5"
     hosts: "somehost=172.19.0.3"
 ```
-And type `sudo fig run --rm trans`.
+And type `sudo fig up` of `sudo fig up -d` if you want to daemonize.
 
 Or you can just use docker
 ```
