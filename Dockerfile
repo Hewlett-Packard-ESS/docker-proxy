@@ -25,7 +25,6 @@ RUN useradd -M squid && \
     mkdir -p /etc/squid/ssl_cert && \
     mkdir -p /var/log/squid && \
     cd /etc/squid/ssl_cert && \
-    openssl req -subj "/CN=squid.docker/O=HP/C=UK/subjectAltName=DNS.1=*,DNS.2=*.*,DNS.3=*.*.*" -new -newkey rsa:2048 -days 1365 -nodes -x509 -sha256 -keyout key.pem -out cert.pem && \
     chown -R squid:squid /var/cache/squid && \
     chown -R squid:squid /etc/squid && \
     chown -R squid:squid /var/log/squid && \
