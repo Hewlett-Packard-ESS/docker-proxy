@@ -5,8 +5,10 @@ cache_log /var/log/squid/cache.log
 cache_store_log /var/log/squid/store.log
 coredump_dir /var/cache/squid
 
+<% if @confvars[:tdns_enabled] === true %>
 dns_nameservers 127.0.0.1
 hosts_file none
+<% end %>
 
 # debug_options ALL,3
 
@@ -69,7 +71,7 @@ ssl_bump server-first all
 <% end %>
 
 # Some more, rather insecure options
-<% if @confvars[:insecure] %>
+<% if @confvars[:insecure] === true %>
 sslproxy_flags DONT_VERIFY_PEER
 sslproxy_cert_error allow all
 <% end %>

@@ -1,3 +1,18 @@
+def default_value(val, default)
+  if val.nil?
+    return default
+  end
+  if val === 'true'
+    return true
+  elsif val === 'false'
+    return false
+  elsif val.is_a? Numeric
+    return BigDecimal.new(val).to_i
+  else
+    return val
+  end
+end
+
 def parseHosts(input) 
   if input.nil?
     return []
@@ -13,10 +28,6 @@ def parseHosts(input)
   return masqs
 end
 
-hostsConfig = {
-  :hosts => parseHosts(ENV['hosts'])
-}
-
 def parseNameservers(input) 
   if input.nil?
     return []
@@ -24,27 +35,42 @@ def parseNameservers(input)
   return input.split(',')
 end
 
+hostsConfig = {
+  :hosts => parseHosts(ENV['hosts'])
+}
+
 nameserverConfig = {
   :nameservers => parseNameservers(ENV['nameservers'])
 }
 
-template '/etc/dnsmasq.d/00hosts' do
-  source 'hosts.erb'
-  variables ({ :confvars => hostsConfig })
-end
+dnsEnabled = default_value(ENV['tdns_enabled'], true)
 
-template '/etc/dnsmasq.conf' do
-  source 'dnsmasq.conf.erb'
-end
+if dnsEnabled === true
 
-if nameserverConfig[:nameservers].length === 0
-  file "/etc/resolv.dnsmasq.conf" do
-    content ::File.open("/etc/resolv.conf").read
+  cookbook_file 'dnsmasq.service.conf' do
+    path '/etc/supervisord.d/dnsmasq.service.conf'
     action :create
   end
-else
-  template '/etc/resolv.dnsmasq.conf' do
-    source 'resolv.dnsmasq.conf.erb'
-    variables ({ :confvars => nameserverConfig })
+
+  template '/etc/dnsmasq.d/00hosts' do
+    source 'hosts.erb'
+    variables ({ :confvars => hostsConfig })
   end
+
+  template '/etc/dnsmasq.conf' do
+    source 'dnsmasq.conf.erb'
+  end
+
+  if nameserverConfig[:nameservers].length === 0
+    file "/etc/resolv.dnsmasq.conf" do
+      content ::File.open("/etc/resolv.conf").read
+      action :create
+    end
+  else
+    template '/etc/resolv.dnsmasq.conf' do
+      source 'resolv.dnsmasq.conf.erb'
+      variables ({ :confvars => nameserverConfig })
+    end
+  end
+
 end

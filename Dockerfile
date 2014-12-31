@@ -30,12 +30,9 @@ RUN useradd -M squid && \
     chown -R squid:squid /var/log/squid && \
     chown -R squid:squid /var/lib/ssl_db
 
-# Add the services
-COPY services/* /etc/supervisord.d/
-
-# Add the cookbooks
-COPY cookbooks/ /chef/cookbooks/
-
 # Set the chef local run list
 ENV chef_node_name proxy.docker.local
 ENV chef_run_list squid,dnsmasq,iptables
+
+# Add the cookbooks
+COPY cookbooks/ /chef/cookbooks/

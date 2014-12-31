@@ -39,9 +39,15 @@ class PortForward:
 class IpTables:
     def __init__(self):
         self.forwards = []
+<% if @confvars[:dns] === true %>
         self.forwards.append(PortForward(53, 53, 'udp'))
+<% end %>        
+<% if @confvars[:http] === true %>
         self.forwards.append(PortForward(80, 3129, 'tcp'))
+<% end %>        
+<% if @confvars[:https] === true %>
         self.forwards.append(PortForward(443, 3130, 'tcp'))
+<% end %> 
     def add(self):
         for pf in self.forwards:
           if pf.active == False:

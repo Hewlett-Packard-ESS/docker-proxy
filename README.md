@@ -8,6 +8,9 @@ It contains the following software:
   - squid (v3.5.0.4, patched)
   - chef (--local-mode, as provided by hpess/chef)
 
+
+You don't have to use all of these things, for example - if you just want a centralised place for DNS entries you can disabled the http/https aspect with environment variables (see further down).
+
 ## How it works
 Running this container will modify IPTables on your host to NAT the configured traffic from docker containers to this container, where the request will be handled in a single place (transparent http/https with squid and transparent dns with dnsmasq).  Upon stopping the container these rules get removed:
 ```
@@ -85,6 +88,9 @@ corp:
   privileged: true
   net: "host"
   environment:
+    thttp_enabled: true   // defaults to true
+    thttps_enabled: true  // defaults to true
+    tdns_enabled: true    // defaults to true
     cache_peer: 'your.upstream.proxy'
     cache_peer_port: 8080
     insecure: 'true'
@@ -96,6 +102,8 @@ home:
   image: hpess/dockerproxy
   privileged: true
   net: "host"
+  thttp_enabled: false // disables transparent http
+  thttps_enabled: false // disables mitm https
   environment:
     nameservers: "8.8.8.8,8.8.4.4"
 ```
