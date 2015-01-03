@@ -102,9 +102,9 @@ home:
   image: hpess/dockerproxy
   privileged: true
   net: "host"
-  thttp_enabled: false // disables transparent http
-  thttps_enabled: false // disables mitm https
   environment:
+    thttp_enabled: false // disables transparent http
+    thttps_enabled: false // disables mitm https
     nameservers: "8.8.8.8,8.8.4.4"
 ```
 And type `sudo fig up <corp/home>` of `sudo fig up <corp/home> -d` if you want to daemonize.
