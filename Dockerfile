@@ -28,7 +28,8 @@ RUN useradd -M squid && \
     chown -R squid:squid /var/cache/squid && \
     chown -R squid:squid /etc/squid && \
     chown -R squid:squid /var/log/squid && \
-    chown -R squid:squid /var/lib/ssl_db
+    chown -R squid:squid /var/lib/ssl_db && \
+    setcap 'cap_net_bind_service=+ep' /usr/sbin/dnsmasq
 
 # Set the chef local run list
 ENV chef_node_name proxy.docker.local
