@@ -29,7 +29,7 @@ def parseHosts(input)
   return masqs
 end
 
-def parseNameservers(input) 
+def parseCsv(input) 
   if input.nil?
     return []
   end
@@ -41,7 +41,8 @@ hostsConfig = {
 }
 
 nameserverConfig = {
-  :nameservers => parseNameservers(ENV['nameservers'])
+  :nameservers => parseCsv(ENV['nameservers']),
+  :search => parseCsv(ENV['search'])
 }
 
 dnsEnabled = default_value(ENV['tdns_enabled'], true)
