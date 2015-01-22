@@ -41,7 +41,8 @@ hostsConfig = {
 }
 
 nameserverConfig = {
-  :nameservers => parseNameservers(ENV['nameservers'])
+  :nameservers => parseNameservers(ENV['nameservers']),
+  :search => ENV['search']
 }
 
 dnsEnabled = default_value(ENV['tdns_enabled'], true)
