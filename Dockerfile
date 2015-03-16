@@ -1,4 +1,4 @@
-FROM hpess/chef:latest
+FROM hpess/chef:master
 # Install pre-reqs
 RUN yum -y install perl-Crypt-OpenSSL-X509 openssl openssl-devel gcc gcc-c++ patch python dnsmasq net-tools telnet bind-utils && \
     yum -y clean all
