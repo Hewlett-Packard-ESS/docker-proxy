@@ -1,4 +1,4 @@
-![Docker Proxy](/squid.git?raw=true "Docker Proxy")
+![Docker Proxy](/squid.gif?raw=true "Docker Proxy")
 
 The purpose of this container is to ease some of the networking issues developing with isolated docker containers - for example, proxy configuration, DNS resolution (host files etc).
 
