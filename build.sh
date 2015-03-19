@@ -1,1 +1,1 @@
-sudo docker build -t hpess/dockerproxy:latest .
+docker build -t hpess/dockerproxy:master .
