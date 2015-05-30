@@ -26,7 +26,9 @@ squidConfig = {
   :cachePeerPort => default_value(ENV['cache_peer_port'], '8080'),
   :localServers => str_to_arr(ENV['local_servers']),
   :insecure => default_value(ENV['insecure'], false),
-  :tdns_enabled => default_value(ENV['tdns_enabled'], true)
+  :tdns_enabled => default_value(ENV['tdns_enabled'], true),
+  :thttp_enabled => default_value(ENV['thttp_enabled'], true),
+  :thttps_enabled => default_value(ENV['thttps_enabled'], true)
 }
 
 

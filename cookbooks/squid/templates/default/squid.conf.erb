@@ -6,6 +6,7 @@ cache_store_log /var/log/squid/store.log
 coredump_dir /var/cache/squid
 
 <% if @confvars[:tdns_enabled] === true %>
+# Use the local dnsmasq server
 dns_nameservers 127.0.0.1
 hosts_file none
 <% end %>
@@ -24,7 +25,11 @@ request_header_access Via deny all
 
 <% if !@confvars[:cachePeer].nil? %>
 # Setup our cache peer
+<% if @confvars[:thttp_enabled] === true or @confvars[:thttps_enabled] === true %>
 cache_peer <%= @confvars[:cachePeer] %> parent <%= @confvars[:cachePeerPort] %> 0 no-query no-digest originserver 
+<% else %>
+cache_peer <%= @confvars[:cachePeer] %> parent <%= @confvars[:cachePeerPort] %> 0 no-query default 
+<% end %>
 <% end%>
 
 # define our local subnet
@@ -56,7 +61,10 @@ http_access allow localhost
 http_access allow all
 
 http_port 3128
+<% if @confvars[:thttp_enabled] === true %>
 http_port 3129 intercept
+<% end %>
+<% if @confvars[:thttps_enabled] === true %>
 https_port 3130 intercept ssl-bump generate-host-certificates=on dynamic_cert_mem_cache_size=4MB cert=/etc/squid/ssl_cert/cert.pem key=/etc/squid/ssl_cert/key.pem
 
 <% if !@confvars[:cachePeer].nil? %>
@@ -70,15 +78,16 @@ ssl_bump client-first all
 ssl_bump server-first all
 <% end %>
 
+# Configure the ssl_crtd workers
+sslcrtd_program /usr/lib/squid/ssl_crtd -s /var/lib/ssl_db -M 4MB
+sslcrtd_children 8 startup=1 idle=1
+<% end %>
+
 # Some more, rather insecure options
 <% if @confvars[:insecure] === true %>
 sslproxy_flags DONT_VERIFY_PEER
 sslproxy_cert_error allow all
 <% end %>
-
-# Configure the ssl_crtd workers
-sslcrtd_program /usr/lib/squid/ssl_crtd -s /var/lib/ssl_db -M 4MB
-sslcrtd_children 8 startup=1 idle=1
 
 # Setup the cache
 cache allow all
