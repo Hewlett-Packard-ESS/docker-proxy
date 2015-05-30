@@ -1,0 +1,11 @@
+proxy:
+  image: hpess/dockerproxy:master
+  restart: always
+  environment:
+    thttp_enabled: false                # no transpartent http
+    thttps_enabled: false               # no transparent https
+    tdns_enabled: false                 # no transparent dns
+    cache_peer: 'proxy.sdc.hp.com'      # upstream cache peer
+    cache_peer_port: 8080               # upstream cache port
+    local_servers: "172.19.0.0/12"      # the range of ips we should just go direct to
+    nameservers: "172.19.2.5"           # the dns server to use
