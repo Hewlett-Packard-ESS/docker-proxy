@@ -112,7 +112,7 @@ And type `sudo fig up <corp/home>` of `sudo fig up <corp/home> -d` if you want t
 
 Or you can just use docker
 ```
-sudo docker run -it --rm --privileged --net=host -e="cache_peer=your.upstream.proxy" hpess/dockerproxy
+sudo docker run -it -d --privileged --net=host -e="cache_peer=your.upstream.proxy" hpess/dockerproxy
 ```
 The available environment variables are:
   - cache_peer: This is your corporate/second proxy that squid should backend on to, if you don't specify an upstream proxy - all requests will be sent direct (always_direct)

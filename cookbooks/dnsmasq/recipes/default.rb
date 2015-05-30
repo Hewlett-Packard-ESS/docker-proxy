@@ -45,34 +45,28 @@ nameserverConfig = {
   :search => parseCsv(ENV['search'])
 }
 
-dnsEnabled = default_value(ENV['tdns_enabled'], true)
+cookbook_file 'dnsmasq.service.conf' do
+  path '/etc/supervisord.d/dnsmasq.service.conf'
+  action :create
+end
 
-if dnsEnabled === true
+template '/etc/dnsmasq.d/00hosts' do
+  source 'hosts.erb'
+  variables ({ :confvars => hostsConfig })
+end
 
-  cookbook_file 'dnsmasq.service.conf' do
-    path '/etc/supervisord.d/dnsmasq.service.conf'
+template '/etc/dnsmasq.conf' do
+  source 'dnsmasq.conf.erb'
+end
+
+if nameserverConfig[:nameservers].length === 0
+  file "/etc/resolv.dnsmasq.conf" do
+    content ::File.open("/etc/resolv.conf").read
     action :create
   end
-
-  template '/etc/dnsmasq.d/00hosts' do
-    source 'hosts.erb'
-    variables ({ :confvars => hostsConfig })
+else
+  template '/etc/resolv.dnsmasq.conf' do
+    source 'resolv.dnsmasq.conf.erb'
+    variables ({ :confvars => nameserverConfig })
   end
-
-  template '/etc/dnsmasq.conf' do
-    source 'dnsmasq.conf.erb'
-  end
-
-  if nameserverConfig[:nameservers].length === 0
-    file "/etc/resolv.dnsmasq.conf" do
-      content ::File.open("/etc/resolv.conf").read
-      action :create
-    end
-  else
-    template '/etc/resolv.dnsmasq.conf' do
-      source 'resolv.dnsmasq.conf.erb'
-      variables ({ :confvars => nameserverConfig })
-    end
-  end
-
 end

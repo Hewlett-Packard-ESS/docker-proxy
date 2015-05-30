@@ -13,7 +13,6 @@ def default_value(val, default)
   end
 end
 
-
 def str_to_arr(input)
   input = default_value(input, [])
   if input === []
@@ -30,55 +29,30 @@ squidConfig = {
   :tdns_enabled => default_value(ENV['tdns_enabled'], true)
 }
 
-squidEnabled = default_value(ENV['thttp_enabled'], true) || default_value(ENV['thttps_enabled'], true)
 
-puts squidEnabled
-puts squidConfig
-if squidEnabled === true 
-  cookbook_file 'squid.service.conf' do
-    path '/etc/supervisord.d/squid.service.conf'
-    action :create
-  end
-
-  template '/etc/squid/squid.conf' do
-    source 'squid.conf.erb'
-    variables ({ :confvars => squidConfig })
-  end
-
-  execute 'create_ssl_certificates' do
-    cwd '/etc/squid/ssl_cert'
-    command <<-EOH
-    openssl req -subj "/CN=squid.docker.local/O=FakeOrg/C=UK/subjectAltName=DNS.1=*,DNS.2=*.*,DNS.3=*.*.*" -new -newkey rsa:2048 -days 1365 -nodes -x509 -sha256 -keyout key.pem -out cert.pem
-    EOH
-    user 'squid'
-    group 'squid'
-    not_if { File.exist?('/etc/squid/ssl_cert/key.pem') }
-  end
-
-  execute 'create_cache_dir' do
-    command "/usr/sbin/squid -N -z"
-    not_if { File.exist?('/var/cache/squid/swap.state') }
-    user 'squid'
-    group 'squid'
-  end
-
+cookbook_file 'squid.service.conf' do
+  path '/etc/supervisord.d/squid.service.conf'
+  action :create
 end
 
-#file '/etc/squid/ssl_cert/cert.pem' do
-#  owner 'squid'
-#  group 'squid'
-#  action :create
-#end
-#
-#file '/etc/squid/ssl_cert/key.pem' do
-#  owner 'squid'
-#  group 'squid'
-#  action :create
-#end
+template '/etc/squid/squid.conf' do
+  source 'squid.conf.erb'
+  variables ({ :confvars => squidConfig })
+end
 
-#bash 'output_ssl' do
-#  code <<-EOH
-#    echo "The CA certificate that will be used for signing is:"
-#    cat /etc/squid/ssl_cert/cert.pem
-#  EOH
-#end
+execute 'create_ssl_certificates' do
+  cwd '/etc/squid/ssl_cert'
+  command <<-EOH
+  openssl req -subj "/CN=squid.docker.local/O=FakeOrg/C=UK/subjectAltName=DNS.1=*,DNS.2=*.*,DNS.3=*.*.*" -new -newkey rsa:2048 -days 1365 -nodes -x509 -sha256 -keyout key.pem -out cert.pem
+  EOH
+  user 'squid'
+  group 'squid'
+  not_if { File.exist?('/etc/squid/ssl_cert/key.pem') }
+end
+
+execute 'create_cache_dir' do
+  command "/usr/sbin/squid -N -z"
+  not_if { File.exist?('/var/cache/squid/swap.state') }
+  user 'squid'
+  group 'squid'
+end
