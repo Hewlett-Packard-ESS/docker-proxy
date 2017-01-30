@@ -114,6 +114,11 @@ Or you can just use docker
 ```
 sudo docker run -it -d --privileged --net=host -e="cache_peer=your.upstream.proxy" hpess/dockerproxy
 ```
+If you are building the docker container behind a proxy you can use docker as this:
+```
+docker build --privileged --build-arg http_proxy=your.upstream.proxy -t dockerproxy .
+docker run --name dockerproxy -it --privileged --net=host -e="cache_peer=your.upstream.proxy" dockerproxy
+```
 The available environment variables are:
   - cache_peer: This is your corporate/second proxy that squid should backend on to, if you don't specify an upstream proxy - all requests will be sent direct (always_direct)
   - cache_peer_port: The port of your second proxy, defaults to 8080

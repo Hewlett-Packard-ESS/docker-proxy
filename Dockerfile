@@ -4,7 +4,16 @@ FROM hpess/chef:master
 COPY patch.txt /usr/local/src/patch.txt
 
 # Install pre-reqs
-RUN yum -y -q install perl-Crypt-OpenSSL-X509 openssl openssl-devel gcc gcc-c++ patch python dnsmasq net-tools telnet bind-utils && \
+RUN \
+    user=$(echo $http_proxy | sed "s#.*://\(.*\):.*@.*#\1#g") && \
+    password=$(echo $http_proxy | sed "s#.*://.*:\(.*\)@.*#\1#g") && \
+    server=$(echo $http_proxy | sed "s#.*://.*:.*@\(.*\)#\1#g") && \
+    [[ -n "$user" ]] && echo "proxy_username=$user" >> /etc/yum.conf && \
+    [[ -n "$password" ]] && echo "proxy_password=$password" >> /etc/yum.conf && \
+    [[ -n "$server" ]] && echo "proxy=http://$server" >> /etc/yum.conf && \
+    cat /etc/yum.conf && \
+    yum -y -q erase fakesystemd && \
+    yum -y -q install perl-Crypt-OpenSSL-X509 openssl openssl-devel gcc gcc-c++ patch python dnsmasq net-tools telnet bind-utils && \
     cd /usr/local/src && \
     wget -q http://www.squid-cache.org/Versions/v3/3.5/squid-3.5.0.4.tar.gz && \
     tar -xzf squid-3.5.0.4.tar.gz && \
